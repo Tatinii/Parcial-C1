@@ -2,10 +2,12 @@
 
 #Clases
 class Producto:
-    def __init__(self, nombre, categoria, precio):
+    def __init__(self, nombre, categoria, precio, existencia):
         self.nombre = nombre
         self.categoria = categoria
         self.precio = precio
+        self.existencia = existencia
+        
 
 #Funciones
 def menu():
