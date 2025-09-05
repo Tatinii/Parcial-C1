@@ -1,14 +1,4 @@
-"""
-En El Salvador, los comerciantes de mercados locales desean llevar un
-control organizado de sus ventas diarias. Cada venta incluye tipos variados
-de productos con ciertas características y precios ya definidos. Sin un registro,
-es difícil saber cuáles productos generan más ingresos y cómo planificar el
-inventario de manera eficiente.
-Se busca un sistema que permita registrar las ventas realizadas, calcular
-automáticamente los ingresos totales y por producto, y generar una salida
-en pantalla al final que muestre los datos ordenados por ingreso o por
-cantidad vendida. 
-"""
+
 
 #Clases
 class Producto:
