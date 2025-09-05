@@ -1,3 +1,4 @@
+#Importacion de libreria para manejo de fechas
 from datetime import datetime
 
 #Clases
@@ -110,6 +111,7 @@ def ingresar_venta():
     except ValueError:
         print("Error: Ingrese un número válido")
 
+# Función para mostrar el inventario actual
 def mostrar_inventario():
     print("\n=== INVENTARIO ACTUAL ===")
     print(f"{'Producto':<15} {'Categoría':<15} {'Precio':<10} {'Existencia':<10}")
@@ -117,19 +119,31 @@ def mostrar_inventario():
     for producto in sorted(productos, key=lambda x: x.nombre):
         print(f"{producto.nombre:<15} {producto.categoria:<15} ${producto.precio:>7.2f} {producto.existencia:>10}")
 
+# Función para mostrar el reporte de ventas
 def mostrar_reporte():
     if not ventas:
         print("\nNo hay ventas registradas")
         return
 
     print("\nReporte de Ventas")
-    items_ordenados = sorted(reporte.items(),
-                           key=lambda x: x[1]['total'],
-                           reverse=True)
-    print("=" * 75)
+    print("¿Cómo desea ordenar el reporte?")
+    print("1. Por ingresos totales")
+    print("2. Por cantidad vendida")
     
-    # Diccionario para acumular ventas por producto
+        # Validaciones de entrada
+    try:
+        orden = input("Seleccione una opción (1-2): ")
+        if orden not in ["1", "2"]:
+            print("Opción inválida. Ordenando por ingresos por defecto.")
+            orden = "1"
+    except:
+        orden = "1"
+    
+    print("\n=== REPORTE DE VENTAS ===")
+    print("=" * 75)
+    # Agrupar ventas por producto
     reporte = {}
+    # Recopilar datos de ventas
     for venta in ventas:
         if venta.producto.nombre in reporte:
             reporte[venta.producto.nombre]['cantidad'] += venta.cantidad
@@ -142,14 +156,23 @@ def mostrar_reporte():
                 'existencia': venta.producto.existencia
             }
     
-    # Ordenar por total de ventas
-    items_ordenados = sorted(reporte.items(), 
-                           key=lambda x: x[1]['total'], 
-                           reverse=True)
+    # Ordenar según la selección del usuario
+    if orden == "1":
+        items_ordenados = sorted(reporte.items(), 
+                               key=lambda x: x[1]['total'], 
+                               reverse=True)
+        criterio = "ingresos totales"
+    else:
+        items_ordenados = sorted(reporte.items(), 
+                               key=lambda x: x[1]['cantidad'], 
+                               reverse=True)
+        criterio = "cantidad vendida"
     
+    print(f"\nOrdenado por: {criterio}")
     total_general = 0
     print(f"{'Producto':<15} {'Cantidad':<10} {'Total':<10} {'Existencia':<10} {'Última Venta'}")
     print("-" * 75)
+    
     for producto, datos in items_ordenados:
         ultima_venta = max((v.fecha for v in ventas if v.producto.nombre == producto))
         print(f"{producto:<15} {datos['cantidad']:<10} ${datos['total']:>7.2f} {datos['existencia']:<10} {ultima_venta.strftime('%d/%m/%Y %H:%M')}")
