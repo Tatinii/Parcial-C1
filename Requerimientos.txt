@@ -12,7 +12,7 @@ cantidad vendida.
 
 
 Clases: 
-
+-Clase padre para productos
 
 Funciones:
 
