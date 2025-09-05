@@ -1,4 +1,5 @@
 #Clases
+#  clase para manejar productos con existencias
 class Producto:
     def __init__(self, nombre, categoria, precio, existencia):
         self.nombre = nombre
@@ -6,7 +7,7 @@ class Producto:
         self.precio = precio
         self.existencia = existencia
         
-
+#  clase para manejar ventas
 class Venta:
     def __init__(self, producto, cantidad):
         self.producto = producto
@@ -14,6 +15,8 @@ class Venta:
         self.total = producto.precio * cantidad
 
 #Funciones
+
+#Funcion para mostrar el menú y obtener la opción del usuario
 def menu():
     print("\n=== MENÚ PRINCIPAL ===")
     print("1. Ingresar venta")
@@ -23,17 +26,20 @@ def menu():
     opcion = input("Seleccione una opción: ")
     return opcion
 
-# Actualizar la lista de productos con existencias
+#Lista inicial de productos y ventas
 productos = [
     Producto("Tomate", "Verdura", 0.25, 100),
     Producto("Manzana", "Fruta", 0.30, 150),
     Producto("Pan", "Panadería", 0.15, 200),
     Producto("Leche", "Lácteos", 1.25, 50)
 ]
+# Lista para almacenar ventas
 ventas = []
 
+# Función para agregar un nuevo producto
 def agregar_producto():
     print("\n=== AGREGAR NUEVO PRODUCTO ===")
+    # Validaciones de entrada
     try:
         nombre = input("Ingrese el nombre del producto: ").strip()
         if not nombre:
@@ -69,11 +75,12 @@ def agregar_producto():
     except Exception as e:
         print(f"Error inesperado: {str(e)}")
 
+# Función para ingresar una venta
 def ingresar_venta():
     print("\nProductos disponibles:")
     for i, producto in enumerate(productos, 1):
         print(f"{i}. {producto.nombre} - ${producto.precio} (Disponible: {producto.existencia})")
-    
+# Validaciones de entrada
     try:
         seleccion = int(input("\nSeleccione el número del producto: ")) - 1
         if 0 <= seleccion < len(productos):
@@ -85,7 +92,8 @@ def ingresar_venta():
             if cantidad > productos[seleccion].existencia:
                 print("Error: No hay suficiente existencia")
                 return
-                
+
+            # Restar la cantidad vendida de la existencia    
             productos[seleccion].existencia -= cantidad
             venta = Venta(productos[seleccion], cantidad)
             ventas.append(venta)
@@ -102,6 +110,7 @@ def mostrar_reporte():
         return
 
     print("\nReporte de Ventas")
+    # Mostrar resumen de ventas
     print("=" * 65)
     
     # Diccionario para acumular ventas por producto
