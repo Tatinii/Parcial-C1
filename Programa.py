@@ -1,5 +1,3 @@
-
-
 #Clases
 class Producto:
     def __init__(self, nombre, categoria, precio, existencia):
@@ -25,6 +23,15 @@ def menu():
     opcion = input("Seleccione una opción: ")
     return opcion
 
+# Actualizar la lista de productos con existencias
+productos = [
+    Producto("Tomate", "Verdura", 0.25, 100),
+    Producto("Manzana", "Fruta", 0.30, 150),
+    Producto("Pan", "Panadería", 0.15, 200),
+    Producto("Leche", "Lácteos", 1.25, 50)
+]
+ventas = []
+
 def agregar_producto():
     print("\n=== AGREGAR NUEVO PRODUCTO ===")
     try:
@@ -47,40 +54,43 @@ def agregar_producto():
         if precio <= 0:
             print("Error: El precio debe ser mayor que 0")
             return
+            
+        existencia = int(input("Ingrese la cantidad en existencia: "))
+        if existencia < 0:
+            print("Error: La existencia no puede ser negativa")
+            return
         
-        nuevo_producto = Producto(nombre, categoria, precio)
+        nuevo_producto = Producto(nombre, categoria, precio, existencia)
         productos.append(nuevo_producto)
         print(f"\nProducto '{nombre}' agregado exitosamente")
         
-    except ValueError:
-        print("Error: El precio debe ser un número válido")
+    except ValueError as e:
+        print("Error: Ingrese valores numéricos válidos")
     except Exception as e:
         print(f"Error inesperado: {str(e)}")
-
-# Lista para almacenar productos y ventas
-productos = [
-    Producto("Tomate", "Verdura", 0.25),
-    Producto("Manzana", "Fruta", 0.30),
-    Producto("Pan", "Panadería", 0.15),
-    Producto("Leche", "Lácteos", 1.25)
-]
-ventas = []
 
 def ingresar_venta():
     print("\nProductos disponibles:")
     for i, producto in enumerate(productos, 1):
-        print(f"{i}. {producto.nombre} - ${producto.precio}")
+        print(f"{i}. {producto.nombre} - ${producto.precio} (Disponible: {producto.existencia})")
     
     try:
         seleccion = int(input("\nSeleccione el número del producto: ")) - 1
         if 0 <= seleccion < len(productos):
             cantidad = int(input("Ingrese la cantidad: "))
-            if cantidad > 0:
-                venta = Venta(productos[seleccion], cantidad)
-                ventas.append(venta)
-                print(f"Venta registrada: {cantidad} {productos[seleccion].nombre}")
-            else:
-                print("La cantidad debe ser mayor a 0")
+            if cantidad <= 0:
+                print("Error: La cantidad debe ser mayor a 0")
+                return
+                
+            if cantidad > productos[seleccion].existencia:
+                print("Error: No hay suficiente existencia")
+                return
+                
+            productos[seleccion].existencia -= cantidad
+            venta = Venta(productos[seleccion], cantidad)
+            ventas.append(venta)
+            print(f"Venta registrada: {cantidad} {productos[seleccion].nombre}")
+            print(f"Existencia restante: {productos[seleccion].existencia}")
         else:
             print("Selección inválida")
     except ValueError:
@@ -92,7 +102,7 @@ def mostrar_reporte():
         return
 
     print("\nReporte de Ventas")
-    print("=" * 50)
+    print("=" * 65)
     
     # Diccionario para acumular ventas por producto
     reporte = {}
@@ -100,10 +110,12 @@ def mostrar_reporte():
         if venta.producto.nombre in reporte:
             reporte[venta.producto.nombre]['cantidad'] += venta.cantidad
             reporte[venta.producto.nombre]['total'] += venta.total
+            reporte[venta.producto.nombre]['existencia'] = venta.producto.existencia
         else:
             reporte[venta.producto.nombre] = {
                 'cantidad': venta.cantidad,
-                'total': venta.total
+                'total': venta.total,
+                'existencia': venta.producto.existencia
             }
     
     # Ordenar por total de ventas
@@ -112,13 +124,13 @@ def mostrar_reporte():
                            reverse=True)
     
     total_general = 0
-    print(f"{'Producto':<15} {'Cantidad':<10} {'Total':<10}")
-    print("-" * 50)
+    print(f"{'Producto':<15} {'Cantidad':<10} {'Total':<10} {'Existencia':<10}")
+    print("-" * 65)
     for producto, datos in items_ordenados:
-        print(f"{producto:<15} {datos['cantidad']:<10} ${datos['total']:.2f}")
+        print(f"{producto:<15} {datos['cantidad']:<10} ${datos['total']:.2f} {datos['existencia']:<10}")
         total_general += datos['total']
     
-    print("-" * 50)
+    print("-" * 65)
     print(f"Total General: ${total_general:.2f}")
 
 # Modificar el while principal
